@@ -256,8 +256,15 @@ class Vector2(Slotted):
                        self.y - d * normal.y)
 
     def angle(self, other):
-        """Return the angle to the vector other"""
-        return math.acos(self.dot(other) / (self.magnitude()*other.magnitude()))
+        """Return the angle to the vector other, in range 0..pi"""
+        # Use atan2 rather than acos and dot product to avoid occasional math domain error
+        angle = self.angle_to(other)
+        # Bring it into range [0,pi] for backwards compatibility
+        return abs(angle)
+
+    def angle_to(self, other):
+        """Return the angle to the vector other, in range 0..2pi"""
+        return math.atan2(other.y, other.x) - math.atan2(self.y, self.x)
 
     def project(self, other):
         """Return one vector projected on the vector other"""
